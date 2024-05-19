@@ -45,13 +45,13 @@ class Record: # Клас для зберігання інформації про
                 self.phones.remove(ph)
 
     def edit_phone(self, old_phone, new_phone):
-        phone_exists = True
+        phone_exists = False
         for p in self.phones:
             if p.value == old_phone:
-                phone_exists = False
+                phone_exists = True
                 break
 
-        if phone_exists:
+        if not phone_exists:
             raise ValueError("Phone number to edit does not exist.")
 
         if not new_phone.isdigit() or len(new_phone) != 10:
@@ -149,9 +149,11 @@ def birthdays(args, book):
         print("No upcoming birthdays.")
 
 def parse_input(user_input): # Parse input function
+    if not user_input.strip():
+        return "", []
     cmd, *args = user_input.split()
     cmd = cmd.strip().lower()
-    return cmd, *args
+    return cmd, args
 
 # Main function
 def main():
@@ -159,7 +161,10 @@ def main():
     print("Welcome to the assistant bot!")
     while True:
         user_input = input("Enter a command: ")
-        command, *args = parse_input(user_input)
+        command, args = parse_input(user_input)
+
+        if command == "":
+            continue
 
         if command in ["close", "exit"]:
             print("Good bye!")
@@ -172,7 +177,7 @@ def main():
             if len(args) != 2:
                 print("Invalid number of arguments.")
                 continue
-            name, phone,  = args
+            name, phone = args
             record = Record(name)
             record.add_phone(phone)
             book.add_record(record)
